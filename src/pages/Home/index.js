@@ -1,15 +1,100 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Api from '../../Api'
 import { BackQuotes, OfficeBuilding, PieChart, Profile, Profile2, Puzzle, Radar, Recruitment, Sean, Search, Tester } from '../../assets'
 import { Footer, Navbar } from '../../components'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Home = () => {
+
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [company, setCompany] = useState('')
+    const [country, setCountry] = useState('')
+    const [email, setEmail] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+    const [note, setNote] = useState('')
+    const [quotes, setQuotes] = useState('')
+    const [visi, setVisi] = useState('')
+    const [mission, setMission] = useState('')
+
+    const toastSuccess = () => {
+        toast.success('Your message has been send!', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
+    }
+
+    
+    const toastError = () => {
+        toast.error('Failed to send your message!', {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
+    }
+
+    const getData = async () => {
+        try {
+            const resQuotes = await Api.GetQuotes() 
+            setQuotes(resQuotes.data[0])
+            const resVisi = await Api.GetVisi() 
+            setVisi(resVisi.data[0])
+            const resMission = await Api.GetMission() 
+            setMission(resMission.data[0])
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const contact = async () => {
+        try {
+            const data = {
+                firstName: firstName,
+                lastName: lastName,
+                company: company,
+                country: country,
+                emailAddress: email,
+                phoneNumber: phoneNumber,
+                note: note,
+            }
+            const response = await Api.CreateContact(data)
+            toastSuccess()
+            setTimeout(() => {
+                window.location.reload();
+            }, 5000);
+        } catch (error) {
+            toastError()
+            
+        }
+    }
+
+    useEffect(() => {
+        getData()
+    }, [])
+    
+
+
     return (
         <div id='home'>
             <Navbar/>
             {/* Section 1 */}
             <div style={{ backgroundImage: `url(${BackQuotes})` }} className='bg-cover h-[50vh] w-full lg:px-16 px-3 py-16 flex items-center'>
-                <h1 className='font-bold w-[50vh] lg:w-[90vh] text-white text-xl lg:text-5xl capitalize'> “We help our clients not just change the world”</h1>
+                <h1 className='font-bold w-[50vh] lg:w-[90vh] text-white text-xl lg:text-5xl capitalize'> “{quotes.nameQuotes}”</h1>
             </div> 
+
+            <ToastContainer/>
             
             {/* Section 2 */}
             <div className='p-5 lg:p-16'>
@@ -86,11 +171,11 @@ const Home = () => {
                     <div className='flex flex-col lg:flex-row items-center lg:items-start justify-center gap-10 lg:gap-20'>
                         <div className='flex flex-col gap-5 lg:w-1/2'>
                             <h1 className='text-[#00989D] text-xl font-bold text-center'>Vision</h1>
-                            <p className='text-center text-xs lg:text-sm text-gray-400'>To become a leading partner in providing reliable and professional recruitment services by creating meaningful connections.</p>
+                            <p className='text-center text-xs lg:text-sm text-gray-400'>{visi.nameVisi}</p>
                         </div>
                         <div className='flex flex-col gap-5 lg:w-1/2'>
                             <h1 className='text-[#00989D] text-xl font-bold text-center'>Mission</h1>
-                            <p className='text-center text-xs lg:text-sm text-gray-400'>We continuously strive to become the preferred source for recruitment services to our client by preparing a qualified and professional workforce to increase business productivity and efficiency in all business fields.</p>
+                            <p className='text-center text-xs lg:text-sm text-gray-400'>{mission.nameMission}</p>
                         </div>
                     </div>
                 </div>
@@ -225,40 +310,40 @@ const Home = () => {
                         <div className='border rounded-xl p-16'>
                             <div className='grid md:grid-cols-2 md:gap-6'>
                                 <div className='relative z-0 w-full mb-6 group'>
-                                    <input type='text' name='floating_first_name' id='floating_first_name' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
-                                    <label for='floating_first_name' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>First name</label>
+                                    <input value={firstName} onChange={ (value) => setFirstName(value.target.value) } type='text' name='floating_first_name' id='floating_first_name' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
+                                    <label htmlFor='floating_first_name' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>First name</label>
                                 </div>
                                 <div className='relative z-0 w-full mb-6 group'>
-                                    <input type='text' name='floating_last_name' id='floating_last_name' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
-                                    <label for='floating_last_name' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Last name</label>
-                                </div>
-                            </div>
-                            <div className='grid md:grid-cols-2 md:gap-6'>
-                                <div className='relative z-0 w-full mb-6 group'>
-                                    <input type='text' name='floating_company' id='floating_company' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
-                                    <label for='floating_company' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Company (Ex. Google)</label>
-                                </div>
-                                <div className='relative z-0 w-full mb-6 group'>
-                                    <input type='text' name='floating_country' id='floating_country' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
-                                    <label for='floating_country' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Country</label>
+                                    <input value={lastName} onChange={ (value) => setLastName(value.target.value) } type='text' name='floating_last_name' id='floating_last_name' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
+                                    <label htmlFor='floating_last_name' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Last name</label>
                                 </div>
                             </div>
                             <div className='grid md:grid-cols-2 md:gap-6'>
                                 <div className='relative z-0 w-full mb-6 group'>
-                                    <input type='tel' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' name='floating_phone' id='floating_phone' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
-                                    <label for='floating_phone' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Phone number</label>
+                                    <input value={company} onChange={ (value) => setCompany(value.target.value) } type='text' name='floating_company' id='floating_company' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
+                                    <label htmlFor='floating_company' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Company (Ex. Google)</label>
                                 </div>
                                 <div className='relative z-0 w-full mb-6 group'>
-                                    <input type='text' name='floating_email' id='floating_email' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
-                                    <label for='floating_email' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Email address</label>
+                                    <input value={country} onChange={ (value) => setCountry(value.target.value) } type='text' name='floating_country' id='floating_country' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
+                                    <label htmlFor='floating_country' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Country</label>
+                                </div>
+                            </div>
+                            <div className='grid md:grid-cols-2 md:gap-6'>
+                                <div className='relative z-0 w-full mb-6 group'>
+                                    <input value={phoneNumber} onChange={ (value) => setPhoneNumber(value.target.value) } type='text' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' name='floating_phone' id='floating_phone' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
+                                    <label htmlFor='floating_phone' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Phone number</label>
+                                </div>
+                                <div className='relative z-0 w-full mb-6 group'>
+                                    <input value={email} onChange={ (value) => setEmail(value.target.value) } type='text' name='floating_email' id='floating_email' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
+                                    <label htmlFor='floating_email' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>Email address</label>
                                 </div>
                             </div>
                             <div className='relative z-0 w-full mb-6 group'>
-                                <input type='email' name='floating_email' id='floating_email' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
-                                <label for='floating_email' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>How Can We Help You? *</label>
+                                <input value={note} onChange={ (value) => setNote(value.target.value) } type='text' name='floating_note' id='floating_note' className='block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-[#00989D] peer' placeholder=' ' required />
+                                <label htmlFor='floating_note' className='peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#00989D] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6'>How Can We Help You? *</label>
                             </div>
                             <div className='flex items-center justify-center lg:justify-end mt-10'>
-                                <button className='bg-[#00989D] hover:bg-[#00985E] p-3 rounded-lg shadow-sm text-sm text-white font-semibold'>Confirmation</button>
+                                <button className='bg-[#00989D] hover:bg-[#00985E] p-3 rounded-lg shadow-sm text-sm text-white font-semibold' onClick={contact}>Confirmation</button>
                             </div>
                         </div>
                     </div>
